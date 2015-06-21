@@ -9,15 +9,15 @@
 
 #include <cvblob.h>
 
-#define MARGIN 50
-#define FR_W 320
-#define FR_H 176
+//#define MARGIN 50
+//#define FR_W 320
+//#define FR_H 176
 
 void usage() {
-	std::cout<<"Usage: ./bsgmmtracker <file> -d <MORPH_ELLIPSE size> -hv 0/1"<<std::endl;
+	std::cout<<"Usage: ./bsgmmtracker <file> -d <MORPH_ELLIPSE size> -hv 0/1 -m <margin>"<<std::endl;
 }
 
-cv::Mat frame, fgMask;
+cv::Mat frame, fgMask;//, res;
 IplImage *frame_, *fgMask_, *labelImg;
 cv::Ptr<cv::BackgroundSubtractor> pMOG;
 cvb::CvBlobs blobs;
@@ -27,10 +27,11 @@ CvPoint2D64f last_pos;
 CvPoint2D64f cur_pos;
 int hv;
 int line_pos;
+int FR_W, FR_H, MARGIN;
 
 int main(int argc, char** argv) {
 
-	if ( argc<6 ) {
+	if ( argc<8 ) {
 		usage();
 		return 1;
 	}
@@ -39,6 +40,12 @@ int main(int argc, char** argv) {
 	cv::VideoCapture cap(argv[1]); 
 	pMOG = new cv::BackgroundSubtractorMOG;
 	hv = atoi(argv[5]);
+
+	cap >> frame;
+	FR_W = frame.cols;
+	FR_H = frame.rows;
+	MARGIN = atoi(argv[7]);
+
 	if (!hv)
 		line_pos = FR_W - MARGIN;
 	else
@@ -97,6 +104,9 @@ int main(int argc, char** argv) {
 		    		last_poses.erase(last_poses.find(id));
 		    	}
 		    }
+		    //int vel_x = cur_pos.x - last_pos.x;
+		    //int vel_y = cur_pos.y - last_pos.y;
+		    //std::cout << "id: " <<id<<" velX: "<<vel_x<<" velY: "<<vel_y<<"\n";
 		    //std::cout<<last_pos.x<<" "<<cur_pos.x<<"\n";
 		    //std::cout<<last_poses.size()<<"\n";
 		    //for(std::map<cvb::CvID, CvPoint2D64f>::iterator it = last_poses.begin();it!=last_poses.end();it++) {
@@ -119,7 +129,15 @@ int main(int argc, char** argv) {
 			cv::putText(frame, "UP->DOWN: "+std::to_string(countLR), cv::Point(10,45), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(255,255,255));
 			cv::putText(frame, "DOWN->UP: "+std::to_string(countRL), cv::Point(10,60), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(255,255,255));
 		}	
-
+			//res = new 
+			//cv::Mat res(FR_H, 2*FR_W, CV_8UC3);
+			//std::cout<<res.size().height<<" "<<res.size().width<<"\n";
+			//res.adjustROI(0, 0, 0, -FR_W);
+    		//frame.copyTo(res);
+    		//res.adjustROI(0, 0, -FR_W, FR_W);
+    		//fgMask.copyTo(res);
+    		//res.adjustROI(0, 0, FR_W, 0);
+    		//cv::imshow("RESULT", res);
 			cv::imshow("FRAME", frame); 
 			cv::imshow("FGMASK", fgMask);
 
