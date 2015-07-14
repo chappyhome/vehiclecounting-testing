@@ -18,7 +18,7 @@ ELSE()
 ENDIF()
 
 #build executable
-add_executable(../bsgmmtracker main.cpp)
+add_executable(bsgmmtracker main.cpp)
 
 #link libraries
-target_link_libraries(../bsgmmtracker ${OpenCV_LIBS} ${cvBlob_LIBS})
+target_link_libraries(bsgmmtracker ${OpenCV_LIBS} ${cvBlob_LIBS})
